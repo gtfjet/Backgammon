@@ -79,7 +79,11 @@ def click(event):
     p = player if playersTurn else bot
     i = imap(event.x,event.y);
     if i>=0 and (dice[0]>0 or dice[1]>0 or dice[2]>0 or dice[3]>0):
-        start = i if p[i]>0 else -1
+        if i>0 and p[0]>0:
+            # In jail, must re-enter from bar
+            start = -1
+        else:
+            start = i if p[i]>0 else -1
     else:
         start = -1
 
@@ -101,6 +105,7 @@ def release(event):
         # Move from start to finish
         p[start]-=1
         p[finish]+=1
+        # Handle hits
         if b[finish]==1:
             b[finish]=0
             b[0]+=1
@@ -110,7 +115,8 @@ def release(event):
             if val == d:
                 dice[index]=0
                 break
-        var.set(str(dice[0])+'  '+str(dice[1])+'  '+str(dice[2])+'  '+str(dice[3]))
+        who = 'Player:  ' if playersTurn else 'Bot:  '
+        var.set(who+str(dice[0])+'  '+str(dice[1])+'  '+str(dice[2])+'  '+str(dice[3]))
         # Handle end of turn
         if dice[0]==0 and dice[1]==0 and dice[2]==0 and dice[3]==0:
             playersTurn = not playersTurn
